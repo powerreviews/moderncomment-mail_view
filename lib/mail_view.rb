@@ -79,6 +79,8 @@ class MailView
     end
 
     def render_mail(name, mail, format = nil)
+      mail = apply_premailer(mail)
+
       body_part = mail
 
       if mail.multipart?
@@ -91,5 +93,9 @@ class MailView
       end
 
       email_template.render(Object.new, :name => name, :mail => mail, :body_part => body_part)
+    end
+
+    def apply_premailer(mail)
+      Premailer::Rails::Hook.new(mail).perform
     end
 end
